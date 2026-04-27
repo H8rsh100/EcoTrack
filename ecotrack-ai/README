@@ -1,0 +1,21 @@
+EcoTrack
+EcoTrack is an AI-powered sustainability dashboard designed to help small and medium enterprises (SMEs) automate their carbon footprint tracking. By leveraging AI to parse utility bills and supply chain data, EcoTrack removes the financial and manual barriers to corporate environmental responsibility.
+
+The Problem
+Most businesses want to go green but face two major hurdles:
+
+Complexity: Calculating Scope 1 & 2 emissions manually is tedious and error-prone.
+Cost: Sustainability consultants are expensive, making climate action a luxury for small businesses.
+
+The Solution
+EcoTrack automates the entire lifecycle of carbon accounting:
+
+AI-Powered Invoicing: Upload electricity, fuel, or waste bills. Our AI (Gemini) extracts the data and converts it into CO2 equivalents.
+Real-time Analytics: A sleek dashboard to visualize emission trends and "hotspots" in the supply chain.
+Impact Verification: Automated generation of "Green Reports" for stakeholders or investors.
+
+Tech Stack
+Frontend: Next.js 15, Tailwind CSS, shadcn/ui
+Backend: Node.js, Supabase (PostgreSQL)
+AI Core: Gemini 2.0 Flash for intelligent Document Processing (IDP)
+Math: Standardized Emission Factor algorithms for precise CO2 conversion
