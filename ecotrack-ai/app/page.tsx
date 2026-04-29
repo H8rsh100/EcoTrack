@@ -1,16 +1,43 @@
+'use client';
+import { useState } from 'react';
 import FileUpload from '@/components/FileUpload';
+import History from '@/components/History';
 
 export default function Home() {
+  // This state is the "doorbell". When it changes, History fetches new data.
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleUploadSuccess = () => {
+    // Ring the doorbell!
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div style={{ padding: '40px', maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>EcoTrack AI 🌿</h1>
-      <p style={{ color: '#666', marginBottom: '30px' }}>
-        Automating sustainability for a greener planet.
-      </p>
+      <header style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '3rem', marginBottom: '10px', fontWeight: '800' }}>EcoTrack AI 🌿</h1>
+        <p style={{ color: '#666', fontSize: '1.1rem' }}>
+          Automating sustainability for a greener planet.
+        </p>
+      </header>
       
-      <div style={{ border: '1px solid #eee', padding: '20px', borderRadius: '12px', background: '#f9f9f9' }}>
-        <FileUpload />
+      <div style={{ 
+        border: '1px solid #eee', 
+        padding: '30px', 
+        borderRadius: '20px', 
+        background: '#ffffff',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' 
+      }}>
+        {/* We pass handleUploadSuccess to FileUpload */}
+        <FileUpload onUploadSuccess={handleUploadSuccess} />
       </div>
+
+      {/* This component displays the logs from Supabase */}
+      <History refreshKey={refreshTrigger} />
+      
+      <footer style={{ marginTop: '50px', textAlign: 'center', color: '#ccc', fontSize: '0.8rem' }}>
+        Built by SY - CSE IoTCSBT | EcoTrack AI © 2026
+      </footer>
     </div>
   );
 }

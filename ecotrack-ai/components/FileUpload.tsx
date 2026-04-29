@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
-export default function FileUpload() {
+interface FileUploadProps {
+  onUploadSuccess?: () => void;
+}
+
+export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -42,6 +46,12 @@ export default function FileUpload() {
 
       const aiData = await aiResponse.json();
       setResult(aiData);
+
+      // 4. TRIGGER REFRESH (Brick 7 Handshake)
+      // This tells the Parent (page.tsx) to tell History.tsx to update
+      if (onUploadSuccess) {
+        onUploadSuccess();
+      }
       
     } catch (error) {
       console.error('Error:', error);
@@ -74,18 +84,18 @@ export default function FileUpload() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-slate-900">Analysis Result</h3>
             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md uppercase">
-              {result.category}
+              {result.category || 'Electricity'}
             </span>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-slate-50 rounded-lg">
               <p className="text-xs text-slate-500">Consumption</p>
-              <p className="text-xl font-bold text-slate-900">{result.units_consumed}</p>
+              <p className="text-xl font-bold text-slate-900">{result.units || result.units_consumed} kWh</p>
             </div>
             <div className="p-3 bg-green-50 rounded-lg">
               <p className="text-xs text-green-600">Carbon Impact</p>
-              <p className="text-xl font-bold text-green-700">{result.estimated_co2_kg} kg CO₂</p>
+              <p className="text-xl font-bold text-green-700">{result.carbonImpact || result.estimated_co2_kg} kg CO₂</p>
             </div>
           </div>
         </div>
