@@ -53,15 +53,15 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 GEMINI_API_KEY=your_gemini_api_key
 
-Run the development server:
+* Run the development server:
 npm run dev
 
 
-📊 The Science Behind the Math
-EcoTrack AI uses a standard emission factor for calculations:
-Total CO2 (kg) = Consumption (kWh) x 0.695 
-Note: The factor 0.695 represents a generalized grid intensity, which can be adjusted in the API route for specific regional grids.
+## 📊 The Science Behind the Math
+* EcoTrack AI uses a standard emission factor for calculations:
+* Total CO2 (kg) = Consumption (kWh) x 0.695 
+* Note: The factor 0.695 represents a generalized grid intensity, which can be adjusted in the API route for specific regional grids.
 
 
-## Built with passion by Harsh Gade and the team to make sustainability accessible to everyone
+## Built with passion by Harsh Gade to make sustainability accessible to everyone
 
