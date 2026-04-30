@@ -1,36 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🌿 EcoTrack AIAutomating Sustainability through Multimodal IntelligenceEcoTrack AI is a full-stack sustainability agent that bridges the gap between physical utility bills and digital carbon tracking. By leveraging Gemini 2.5 Flash, the platform automates the extraction of energy consumption data from messy paper bills and provides real-time analytics on an individual's environmental impact.🚀 The Core Mission (Problem Statement)Most people want to reduce their carbon footprint, but manual tracking is a major friction point. Paper bills are often discarded, and their data is rarely utilized for personal climate accountability. EcoTrack AI solves this by:Removing Friction: Zero manual data entry via AI-powered OCR.Standardizing Metrics: Converting raw kWh into CO₂ mass ($0.695\text{ kg/kWh}$).Historical Persistence: Creating a "Sustainability Diary" that survives long after the paper bill is recycled.🛠️ Tech StackFrontend: Next.js (App Router) with responsive Inline-System-Styles.AI Engine: Google Gemini 2.5 Flash (Vision-to-JSON extraction).Database: Supabase (PostgreSQL) for persistent carbon logging.Storage: Supabase Buckets for secure utility bill hosting.Language: TypeScript for type-safe data handling.✨ Key FeaturesVision-to-Data Pipeline: Upload an image of any electricity bill, and Gemini automatically identifies the units_consumed and calculates estimated_co2.Live Handshake UI: Uses React state lifting to refresh the history dashboard the instant an upload is processed—no page refreshes required.Lifetime Impact Analytics: A dedicated analytics header that sums up total energy use and carbon debt across all historical records.Eco-Ledger: A clean, ordered history of every bill uploaded, providing a transparent audit trail of your carbon footprint.⚙️ Installation & SetupClone the repository:Bashgit clone https://github.com/your-username/ecotrack-ai.git
+cd ecotrack-ai
+Install dependencies:Bash   npm install
+Configure Environment Variables:Create a .env.local file and add your credentials:Code snippet   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   GEMINI_API_KEY=your_gemini_api_key
+Run the development server:Bashnpm run dev
+📊 The Science Behind the MathEcoTrack AI uses a standard emission factor for calculations:$$ \text{Total CO}_2 \text{ (kg)} = \text{Consumption (kWh)} \times 0.695 $$Note: The factor $0.695$ represents a generalized grid intensity, which can be adjusted in the API route for specific regional grids.🤝 Team GOAT CompilersBuilt with passion by Harsh Gade and the team to make sustainability accessible to everyone
