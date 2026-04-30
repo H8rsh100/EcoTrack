@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -14,8 +13,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
-      setResult(null); // Clear previous results
-      
+      setResult(null);
       if (!event.target.files || event.target.files.length === 0) return;
 
       const file = event.target.files[0];
@@ -23,19 +21,11 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `bills/${fileName}`;
 
-      // 1. Upload the physical file to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('bills')
-        .upload(filePath, file);
-
+      const { error: uploadError } = await supabase.storage.from('bills').upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      // 2. Generate a Public URL so our AI can "see" the bill
-      const { data: { publicUrl } } = supabase.storage
-        .from('bills')
-        .getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from('bills').getPublicUrl(filePath);
 
-      // 3. Hit our internal AI API Route
       const aiResponse = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,56 +36,60 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
 
       const aiData = await aiResponse.json();
       setResult(aiData);
-
-      // 4. TRIGGER REFRESH (Brick 7 Handshake)
-      // This tells the Parent (page.tsx) to tell History.tsx to update
-      if (onUploadSuccess) {
-        onUploadSuccess();
-      }
+      if (onUploadSuccess) onUploadSuccess();
       
     } catch (error) {
       console.error('Error:', error);
-      alert('Something went wrong. Check the console!');
+      alert('Analysis failed. Check console.');
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="w-full space-y-6">
-      {/* Upload Zone */}
-      <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors text-center">
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ position: 'relative', cursor: 'pointer' }}>
         <input 
           type="file" 
           onChange={handleUpload} 
           disabled={uploading}
-          className="cursor-pointer text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700"
+          style={{ 
+            position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' 
+          }}
         />
-        {uploading && (
-          <p className="mt-4 text-green-600 font-medium animate-pulse">
-            Gemini AI is analyzing your footprint...
+        <div style={{ padding: '20px' }}>
+          <div style={{ fontSize: '40px', marginBottom: '10px' }}>
+            {uploading ? '⌛' : '📤'}
+          </div>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1e293b' }}>
+            {uploading ? 'Gemini is thinking...' : 'Click to upload bill'}
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+            PNG or JPG (Max 10MB)
           </p>
-        )}
+        </div>
       </div>
 
-      {/* AI Result Display */}
       {result && (
-        <div className="p-6 bg-white border border-green-100 rounded-2xl shadow-sm ring-1 ring-green-900/5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-slate-900">Analysis Result</h3>
-            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md uppercase">
-              {result.category || 'Electricity'}
-            </span>
+        <div style={{ 
+          marginTop: '24px', 
+          paddingTop: '24px', 
+          borderTop: '1px solid #e2e8f0',
+          textAlign: 'left'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <span style={{ fontSize: '10px', fontWeight: '900', color: '#94a3b8', letterSpacing: '1px' }}>LIVE ANALYSIS</span>
+            <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#15803d', backgroundColor: '#dcfce7', padding: '2px 8px', borderRadius: '4px' }}>SUCCESS</span>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-slate-50 rounded-lg">
-              <p className="text-xs text-slate-500">Consumption</p>
-              <p className="text-xl font-bold text-slate-900">{result.units || result.units_consumed} kWh</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ padding: '16px', background: 'white', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
+              <p style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 'bold' }}>UNITS</p>
+              <p style={{ fontSize: '24px', fontWeight: '900', color: '#0f172a' }}>{result.units || result.units_consumed} <small style={{ fontSize: '12px', fontWeight: '500' }}>kWh</small></p>
             </div>
-            <div className="p-3 bg-green-50 rounded-lg">
-              <p className="text-xs text-green-600">Carbon Impact</p>
-              <p className="text-xl font-bold text-green-700">{result.carbonImpact || result.estimated_co2_kg} kg CO₂</p>
+            <div style={{ padding: '16px', background: 'white', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
+              <p style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 'bold' }}>IMPACT</p>
+              <p style={{ fontSize: '24px', fontWeight: '900', color: '#16a34a' }}>{(result.carbonImpact || result.estimated_co2_kg).toFixed(2)} <small style={{ fontSize: '12px', fontWeight: '500' }}>kg</small></p>
             </div>
           </div>
         </div>

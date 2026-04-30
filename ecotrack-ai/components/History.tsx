@@ -25,7 +25,6 @@ export default function History({ refreshKey }: HistoryProps) {
 
     if (!error && data) {
       setLogs(data);
-      // Calculate totals for Analytics
       const kwh = data.reduce((sum, item) => sum + (Number(item.consumption_value) || 0), 0);
       const co2 = data.reduce((sum, item) => sum + (Number(item.co2_emitted_kg) || 0), 0);
       setStats({ totalKwh: kwh, totalCo2: co2 });
@@ -39,69 +38,84 @@ export default function History({ refreshKey }: HistoryProps) {
 
   return (
     <div style={{ marginTop: '40px' }}>
-      {/* --- BRICK 8: ANALYTICS HEADER --- */}
+      {/* --- ANALYTICS CARDS --- */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: '1fr 1fr', 
-        gap: '20px', 
+        gap: '24px', 
         marginBottom: '40px' 
       }}>
         <div style={{ 
-          padding: '25px', 
-          background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', 
-          borderRadius: '24px', 
-          border: '1px solid #bbf7d0',
-          textAlign: 'center'
+          padding: '30px', 
+          background: '#f0fdf4', 
+          borderRadius: '28px', 
+          border: '1px solid #dcfce7',
+          textAlign: 'center',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
         }}>
-          <p style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Energy</p>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#14532d', margin: '10px 0' }}>
-            {stats.totalKwh.toLocaleString()} <span style={{ fontSize: '1rem' }}>kWh</span>
+          <p style={{ fontSize: '0.75rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Energy</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#14532d', margin: '8px 0' }}>
+            {stats.totalKwh.toLocaleString()} <span style={{ fontSize: '1rem', fontWeight: '500' }}>kWh</span>
           </h2>
         </div>
         
         <div style={{ 
-          padding: '25px', 
-          background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)', 
-          borderRadius: '24px', 
-          border: '1px solid #fecaca',
-          textAlign: 'center'
+          padding: '30px', 
+          background: '#fef2f2', 
+          borderRadius: '28px', 
+          border: '1px solid #fee2e2',
+          textAlign: 'center',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
         }}>
-          <p style={{ fontSize: '0.8rem', color: '#991b1b', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>Carbon Debt</p>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#7f1d1d', margin: '10px 0' }}>
-            {stats.totalCo2.toFixed(1)} <span style={{ fontSize: '1rem' }}>kg</span>
+          <p style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Carbon Debt</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#7f1d1d', margin: '8px 0' }}>
+            {stats.totalCo2.toFixed(2)} <span style={{ fontSize: '1rem', fontWeight: '500' }}>kg</span>
           </h2>
         </div>
       </div>
 
-      <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
+      <h3 style={{ 
+        fontSize: '1.25rem', 
+        fontWeight: '800', 
+        color: '#1f2937', 
+        marginBottom: '20px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
         📊 Detailed Log History
       </h3>
 
       {loading ? (
-        <p style={{ color: '#999', textAlign: 'center' }}>Syncing with Eco-Ledger...</p>
+        <p style={{ color: '#9ca3af', textAlign: 'center', padding: '20px' }}>Syncing Eco-Ledger...</p>
       ) : logs.length === 0 ? (
-        <div style={{ padding: '40px', textAlign: 'center', background: '#f9f9f9', borderRadius: '20px', border: '2px dashed #ddd' }}>
-          No footprint detected. Upload a bill to begin.
+        <div style={{ padding: '60px 20px', textAlign: 'center', background: '#f9fafb', borderRadius: '24px', border: '2px dashed #e5e7eb', color: '#6b7280' }}>
+          Your footprint is empty. Start by uploading a bill.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {logs.map((log) => (
             <div key={log.id} style={{ 
               display: 'flex', 
               justifyContent: 'space-between', 
-              padding: '20px', 
+              alignItems: 'center',
+              padding: '20px 24px', 
               background: '#fff', 
-              borderRadius: '18px', 
-              border: '1px solid #eee',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+              borderRadius: '20px', 
+              border: '1px solid #f3f4f6',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)'
             }}>
               <div>
-                <span style={{ fontWeight: '800', color: '#1f2937' }}>{log.consumption_value} kWh</span>
-                <p style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{new Date(log.created_at).toDateString()}</p>
+                <div style={{ fontWeight: '800', fontSize: '1.1rem', color: '#111827' }}>{log.consumption_value} kWh</div>
+                <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: '500' }}>
+                  {new Date(log.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontWeight: '800', color: '#059669' }}>{log.co2_emitted_kg} kg CO₂</span>
-                <p style={{ fontSize: '0.7rem', color: '#9ca3af' }}>Verified by Gemini</p>
+                <div style={{ fontWeight: '800', color: '#059669', fontSize: '1.1rem' }}>
+                  {Number(log.co2_emitted_kg).toFixed(2)} kg CO₂
+                </div>
+                <div style={{ fontSize: '0.65rem', color: '#10b981', fontWeight: '700', textTransform: 'uppercase' }}>Verified by Gemini</div>
               </div>
             </div>
           ))}
