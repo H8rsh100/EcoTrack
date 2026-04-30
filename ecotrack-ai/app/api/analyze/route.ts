@@ -1,78 +1,40 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-// 1. Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-// 2. Initialize Supabase (Using Service Role Key to bypass RLS for the backend)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(req: Request) {
   try {
     const { imageUrl } = await req.json();
-    
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: "Missing Gemini API Key" }, { status: 500 });
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      console.error("DEBUG: GEMINI_API_KEY is missing from .env.local");
+      return new Response(JSON.stringify({ error: "API Key missing" }), { status: 500 });
     }
 
-    // Use the 2.5-flash model we established earlier
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    
-    // Fetch the image from Supabase and convert to base64
-    const imageResp = await fetch(imageUrl);
-    const imageBuffer = await imageResp.arrayBuffer();
+    console.log("DEBUG: Analyzing image at URL:", imageUrl);
 
-    // 3. Call Gemini to extract data
-    const result = await model.generateContent([
-      "Extract the total units (kWh) and total amount due from this electricity bill. Return as JSON: { \"units\": number, \"amount\": number }",
-      {
-        inlineData: {
-          data: Buffer.from(imageBuffer).toString("base64"),
-          mimeType: "image/png",
-        },
-      },
-    ]);
-
-    const text = result.response.text();
-    const jsonString = text.replace(/```json|```/g, "").trim();
-    const aiData = JSON.parse(jsonString);
-
-    // 4. PERFORM BRICK 6 MATH & PERSISTENCE
-    const units = parseFloat(aiData.units) || 0;
-    const amount = parseFloat(aiData.amount) || 0;
-    const carbonImpact = units * 0.695; // 2026 India Grid Intensity Factor
-
-    const { error: dbError } = await supabase
-      .from('carbon_logs')
-      .insert({
-        category: 'Electricity',
-        consumption_value: units,
-        unit: 'kWh',
-        co2_emitted_kg: carbonImpact,
-        document_url: imageUrl,
-        is_verified: true
-        // Note: user_id is omitted because we made it optional in the SQL step
-      });
-
-    if (dbError) {
-      console.error("❌ DATABASE SAVE FAILED:", dbError.message);
-    } else {
-      console.log("✅ DATA PERSISTED TO CARBON_LOGS");
-    }
-
-    // 5. Return everything to the frontend
-    return NextResponse.json({
-      units,
-      amount,
-      carbonImpact: carbonImpact.toFixed(2)
+    // Call Gemini
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: "Extract the total electricity units consumed (kWh) from this bill. Return ONLY a JSON object: { \"units\": number }" },
+            { inlineData: { mimeType: "image/jpeg", data: await fetch(imageUrl).then(res => res.arrayBuffer()).then(buf => Buffer.from(buf).toString('base64')) } }
+          ]
+        }]
+      })
     });
 
-  } catch (error: any) {
-    console.error("AI ROUTE ERROR:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error("DEBUG: Gemini API Error:", data);
+      return new Response(JSON.stringify(data), { status: response.status });
+    }
+
+    return new Response(JSON.stringify(data), { status: 200 });
+
+  } catch (error) {
+    console.error("DEBUG: Catch Error:", error);
+    return new Response(JSON.stringify({ error: "Server Error" }), { status: 500 });
   }
 }
