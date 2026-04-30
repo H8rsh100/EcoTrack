@@ -46,7 +46,7 @@ Most people want to reduce their carbon footprint, but manual tracking is a majo
    cd ecotrack-ai
 
 * Install dependencies :
-npm install
+* npm install
 
 * Configure Environment Variables :
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
