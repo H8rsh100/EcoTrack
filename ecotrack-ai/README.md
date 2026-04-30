@@ -45,16 +45,19 @@ Most people want to reduce their carbon footprint, but manual tracking is a majo
    git clone [https://github.com/your-username/ecotrack-ai.git](https://github.com/your-username/ecotrack-ai.git)
    cd ecotrack-ai
 
-* Install dependencies :
-* npm install
+2. **Install dependencies:**
+```bash
+[npm install]
 
-* Configure Environment Variables :
+3. **Configure Environment Variables:**
+```bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 GEMINI_API_KEY=your_gemini_api_key
 
-* Run the development server :
-npm run dev
+3. **Run the development server:**
+```bash
+[npm run dev]
 
 
 ## 📊 The Science Behind the Math
