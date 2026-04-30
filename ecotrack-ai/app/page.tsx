@@ -4,11 +4,10 @@ import FileUpload from '@/components/FileUpload';
 import History from '@/components/History';
 
 export default function Home() {
-  // This state is the "doorbell". When it changes, History fetches new data.
+  // State to trigger History component refresh
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleUploadSuccess = () => {
-    // Ring the doorbell!
     setRefreshTrigger(prev => prev + 1);
   };
 
@@ -28,16 +27,12 @@ export default function Home() {
         background: '#ffffff',
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' 
       }}>
-        {/* We pass handleUploadSuccess to FileUpload */}
         <FileUpload onUploadSuccess={handleUploadSuccess} />
       </div>
 
-      {/* This component displays the logs from Supabase */}
+      {/* Analytics Summary and Log List */}
       <History refreshKey={refreshTrigger} />
       
-      <footer style={{ marginTop: '50px', textAlign: 'center', color: '#ccc', fontSize: '0.8rem' }}>
-        Built by SY - CSE IoTCSBT | EcoTrack AI © 2026
-      </footer>
     </div>
   );
 }
