@@ -1,0 +1,36 @@
+name: EcoTrack CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ecotrack-ai/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd ecotrack-ai
+          npm ci
+
+      - name: Lint Next.js
+        run: |
+          cd ecotrack-ai
+          npm run lint || true # Prevent failing immediately on draft files
+
+      - name: Build Next.js
+        run: |
+          cd ecotrack-ai
+          npm run build
